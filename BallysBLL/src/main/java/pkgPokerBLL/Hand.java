@@ -11,7 +11,8 @@ import pkgPokerEnum.eCardNo;
 import pkgPokerEnum.eHandStrength;
 import pkgPokerEnum.eRank;
 import pkgPokerEnum.eSuit;
- 
+
+import pkgException.HandException;
 
 public class Hand {
 
@@ -40,9 +41,9 @@ public class Hand {
 		CardsInHand.add(c);
 	}
 
-	public Hand EvaluateHand() {
+	public Hand EvaluateHand() throws HandException{
 
-		Hand h = null;
+		//Hand h = null;
 
 		ArrayList<Hand> ExplodedHands = ExplodeHands(this);
 
@@ -53,19 +54,304 @@ public class Hand {
 		//	Figure out best hand
 		Collections.sort(ExplodedHands, Hand.HandRank);
 		
-		//	Return best hand.  
-		//	TODO: Fix...  what to do if there is a tie?
-		return ExplodedHands.get(0);
+		// test to make sure there are no ties, and return the best hand
+		return PickBestHand(ExplodedHands);
 	}
 
 	
-	//TODO: one hand is passed in, 1, 52, 2704, etc are passed back
-	//		No jokers, 'ReturnHands' should have one hand
-	//		One Wild/joker 'ReturnHands' should have 52 hands, etc
+	public static Hand PickBestHand(ArrayList<Hand> hands) throws HandException
+	{
+		try
+		{
+			if (hands.size() == 1)
+				return hands.get(0);
+			if (hands.get(0).getHandScore() == hands.get(1).getHandScore())
+				throw new HandException(hands.get(0));
+		}
+		catch (HandException e)
+		{
+			System.out.println("HandException thrown: top two hands have same value");
+			System.out.println("First:");
+			System.out.println(" " + e.getExHand().toString());
+			System.out.println("Second:");
+			System.out.println(" " + hands.get(1).toString());
+		}
+		return hands.get(0);
+	}
 	
-	public static ArrayList<Hand> ExplodeHands(Hand h) {
+	
+	
+	//returns the number of jokers
+	public int CountJokers()
+	{
+		int jokerCount = 0;
+		for (Card c : this.CardsInHand)
+		{
+			if (c.geteRank() == eRank.JOKER)
+				jokerCount++;
+		}
+		return jokerCount;
+	}
+	
 
+	public static ArrayList<Hand> ExplodeHands(Hand h) {
+		// no jokers: return only possible hand
+		// 1 jokers: 52 * 1 * 1 * 1 * 1 different cases, so that means there are 52 different hands
+		// 2 jokers: 52 * 52 * 1 * 1 * 1 
+		// etc.
+		
+		//doublecheck that the hand is valid
+		try
+		{
+			if (h.getCardsInHand().size() != 5)
+				throw new HandException(h);
+		}
+		catch (HandException e)
+		{
+			System.out.println("HandException thrown : Hand has " + e.getExHand().getCardsInHand().size() + " cards, expected 5.");
+		}
+		
+		int jokerCount = h.CountJokers();
 		ArrayList<Hand> ReturnHands = new ArrayList<Hand>();
+		
+		switch (jokerCount)
+		{
+			case 0:
+				ReturnHands.add(h);
+				break;
+			case 1:
+				for (eRank er0 : eRank.values())
+				{
+					if (er0 == eRank.JOKER)
+						continue;
+					
+					for (eSuit es0 : eSuit.values())
+					{
+						if (es0 == eSuit.JOKER)
+							continue;
+						
+						
+						Hand possibleHand = new Hand();
+						possibleHand.AddCardToHand(new Card(es0,er0,1));
+						possibleHand.AddCardToHand(h.getCardsInHand().get(eCardNo.SecondCard.getCardNo()));
+						possibleHand.AddCardToHand(h.getCardsInHand().get(eCardNo.ThirdCard.getCardNo()));
+						possibleHand.AddCardToHand(h.getCardsInHand().get(eCardNo.FourthCard.getCardNo()));
+						possibleHand.AddCardToHand(h.getCardsInHand().get(eCardNo.FifthCard.getCardNo()));
+						ReturnHands.add(possibleHand);
+					}
+				}
+				break;
+			case 2:
+				for (eRank er0 : eRank.values())
+				{
+					if (er0 == eRank.JOKER)
+						continue;
+					
+					for (eSuit es0 : eSuit.values())
+					{
+						if (es0 == eSuit.JOKER)
+							continue;
+						
+						for (eRank er1 : eRank.values())
+						{
+							if (er1 == eRank.JOKER)
+								continue;
+							
+							for (eSuit es1 : eSuit.values())
+							{
+								if (es1 == eSuit.JOKER)
+									continue;
+								
+								
+								Hand possibleHand = new Hand();
+								possibleHand.AddCardToHand(new Card(es0,er0,1));
+								possibleHand.AddCardToHand(new Card(es1,er1,1));
+								possibleHand.AddCardToHand(h.getCardsInHand().get(eCardNo.ThirdCard.getCardNo()));
+								possibleHand.AddCardToHand(h.getCardsInHand().get(eCardNo.FourthCard.getCardNo()));
+								possibleHand.AddCardToHand(h.getCardsInHand().get(eCardNo.FifthCard.getCardNo()));
+								ReturnHands.add(possibleHand);
+							}
+						}
+					}
+				}
+				break;
+			case 3:
+				for (eRank er0 : eRank.values())
+				{
+					if (er0 == eRank.JOKER)
+						continue;
+					
+					for (eSuit es0 : eSuit.values())
+					{
+						if (es0 == eSuit.JOKER)
+							continue;
+						
+						for (eRank er1 : eRank.values())
+						{
+							if (er1 == eRank.JOKER)
+								continue;
+							
+							for (eSuit es1 : eSuit.values())
+							{
+								if (es1 == eSuit.JOKER)
+									continue;
+								
+								for (eRank er2 : eRank.values())
+								{
+									if (er2 == eRank.JOKER)
+										continue;
+									
+									for (eSuit es2 : eSuit.values())
+									{
+										if (es2 == eSuit.JOKER)
+											continue;
+										
+										
+										Hand possibleHand = new Hand();
+										possibleHand.AddCardToHand(new Card(es0,er0,1));
+										possibleHand.AddCardToHand(new Card(es1,er1,1));
+										possibleHand.AddCardToHand(new Card(es2,er2,1));
+										possibleHand.AddCardToHand(h.getCardsInHand().get(eCardNo.FourthCard.getCardNo()));
+										possibleHand.AddCardToHand(h.getCardsInHand().get(eCardNo.FifthCard.getCardNo()));
+										ReturnHands.add(possibleHand);
+									}
+								}
+							}
+						}
+					}
+				}
+				break;
+			case 4:
+				for (eRank er0 : eRank.values())
+				{
+					if (er0 == eRank.JOKER)
+						continue;
+					
+					for (eSuit es0 : eSuit.values())
+					{
+						if (es0 == eSuit.JOKER)
+							continue;
+						
+						for (eRank er1 : eRank.values())
+						{
+							if (er1 == eRank.JOKER)
+								continue;
+							
+							for (eSuit es1 : eSuit.values())
+							{
+								if (es1 == eSuit.JOKER)
+									continue;
+								
+								for (eRank er2 : eRank.values())
+								{
+									if (er2 == eRank.JOKER)
+										continue;
+									
+									for (eSuit es2 : eSuit.values())
+									{
+										if (es2 == eSuit.JOKER)
+											continue;
+										
+										for (eRank er3 : eRank.values())
+										{
+											if (er3 == eRank.JOKER)
+												continue;
+											
+											for (eSuit es3 : eSuit.values())
+											{
+												if (es3 == eSuit.JOKER)
+													continue;
+												
+												
+												Hand possibleHand = new Hand();
+												possibleHand.AddCardToHand(new Card(es0,er0,1));
+												possibleHand.AddCardToHand(new Card(es1,er1,1));
+												possibleHand.AddCardToHand(new Card(es2,er2,1));
+												possibleHand.AddCardToHand(new Card(es3,er3,1));
+												possibleHand.AddCardToHand(h.getCardsInHand().get(eCardNo.FifthCard.getCardNo()));
+												ReturnHands.add(possibleHand);
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				break;
+			case 5:
+				for (eRank er0 : eRank.values())
+				{
+					if (er0 == eRank.JOKER)
+						continue;
+					
+					for (eSuit es0 : eSuit.values())
+					{
+						if (es0 == eSuit.JOKER)
+							continue;
+						
+						for (eRank er1 : eRank.values())
+						{
+							if (er1 == eRank.JOKER)
+								continue;
+							
+							for (eSuit es1 : eSuit.values())
+							{
+								if (es1 == eSuit.JOKER)
+									continue;
+								
+								for (eRank er2 : eRank.values())
+								{
+									if (er2 == eRank.JOKER)
+										continue;
+									
+									for (eSuit es2 : eSuit.values())
+									{
+										if (es2 == eSuit.JOKER)
+											continue;
+										
+										for (eRank er3 : eRank.values())
+										{
+											if (er3 == eRank.JOKER)
+												continue;
+											
+											for (eSuit es3 : eSuit.values())
+											{
+												if (es3 == eSuit.JOKER)
+													continue;
+												
+												for (eRank er4 : eRank.values())
+												{
+													if (er4 == eRank.JOKER)
+														continue;
+													
+													for (eSuit es4 : eSuit.values())
+													{
+														if (es4 == eSuit.JOKER)
+															continue;
+														
+														
+														Hand possibleHand = new Hand();
+														possibleHand.AddCardToHand(new Card(es0,er0,1));
+														possibleHand.AddCardToHand(new Card(es1,er1,1));
+														possibleHand.AddCardToHand(new Card(es2,er2,1));
+														possibleHand.AddCardToHand(new Card(es3,er3,1));
+														possibleHand.AddCardToHand(new Card(es4,er4,1));
+														ReturnHands.add(possibleHand);
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				break;
+		}
+		
+		//return the full set of hands
 		return ReturnHands;
 	}
 
@@ -73,6 +359,21 @@ public class Hand {
 
 		Collections.sort(h.getCardsInHand());
 
+		try
+		{
+			if (h.getCardsInHand().size() != 5)
+			{
+				throw new HandException(h);
+			}
+		}
+		catch (HandException e)
+		{
+			System.out.println("HandException thrown : Hand has " + e.getExHand().getCardsInHand().size() + " cards, expected 5.");
+		}
+		
+		
+		
+		
 		// Another way to sort
 		// Collections.sort(h.getCardsInHand(), Card.CardRank);
 
@@ -213,7 +514,32 @@ public class Hand {
 
 	}
 
-	// TODO: Implement This Method
+
+	public static boolean isHandFiveOfAKind(Hand h, HandScore hs)
+	{
+		int iCnt = 0;
+		for (eRank r : eRank.values())
+		{
+			iCnt = 0;
+			for (Card c : h.getCardsInHand())
+			{
+				if (c.geteRank() == r)
+				{
+					iCnt++;
+				}
+			}
+			if (iCnt == 5)
+			{
+				hs.setHandStrength(eHandStrength.FiveOfAKind);
+				hs.setHiHand(h.getCardsInHand().get(eCardNo.FirstCard.getCardNo()).geteRank());
+				hs.setLoHand(null); 
+				return true;
+			}
+		}
+		return false;
+	}
+	
+
 	public static boolean isHandFourOfAKind(Hand h, HandScore hs) {
 
 		boolean isHandFourOfAKind = false;

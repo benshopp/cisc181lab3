@@ -38,12 +38,56 @@ public class Hand_Test {
 
 	
 
-	
-	
+	@Test
+	public void TestFiveOfAKind()
+	{
+		Hand h = new Hand();
+ 
+		
+		h.AddToCardsInHand(new Card(eSuit.JOKER, eRank.JOKER,1));
+		h.AddToCardsInHand(new Card(eSuit.DIAMONDS, eRank.TEN,1));
+		h.AddToCardsInHand(new Card(eSuit.HEARTS, eRank.TEN,1));
+		h.AddToCardsInHand(new Card(eSuit.SPADES, eRank.TEN,1));
+		h.AddToCardsInHand(new Card(eSuit.CLUBS, eRank.TEN,1));
+		
+		
+		try {
+			h = h.EvaluateHand();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		assertTrue(h.getHandScore().getHandStrength() == eHandStrength.FiveOfAKind);
+		assertTrue(h.getHandScore().getHiHand() == eRank.TEN);
+	}
 	
 	
 	@Test
-	public void TestRodyalFlush() {
+	public void TestFiveOfAKind2()
+	{
+		Hand h = new Hand();
+ 
+		
+		h.AddToCardsInHand(new Card(eSuit.JOKER, eRank.JOKER,1));
+		h.AddToCardsInHand(new Card(eSuit.JOKER, eRank.JOKER,1));
+		h.AddToCardsInHand(new Card(eSuit.HEARTS, eRank.TEN,1));
+		h.AddToCardsInHand(new Card(eSuit.SPADES, eRank.TEN,1));
+		h.AddToCardsInHand(new Card(eSuit.CLUBS, eRank.TEN,1));
+		
+		
+		try {
+			h = h.EvaluateHand();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		assertTrue(h.getHandScore().getHandStrength() == eHandStrength.FiveOfAKind);
+		assertTrue(h.getHandScore().getHiHand() == eRank.TEN);
+	}
+	
+	
+	@Test
+	public void TestRoyalFlush() {
 		Hand h = new Hand();
  
 		
@@ -80,6 +124,8 @@ public class Hand_Test {
 			e.printStackTrace();
 		}
 
+		assertTrue(h.getHandScore().getHandStrength() == eHandStrength.StraightFlush);
+		assertTrue(h.getHandScore().getHiHand() == eRank.KING);
 	}
 	
 	@Test

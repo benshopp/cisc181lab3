@@ -13,4 +13,18 @@ public class Player {
 		PlayerName = playerName;
 	}
 
+	public String getPlayerName() {
+		return PlayerName;
+	}
+
+	public void setPlayerName(String playerName) {
+		PlayerName = playerName;
+	}
+
+	public UUID getPlayerID() {
+		return PlayerID;
+	}
+
+	
+	
 }

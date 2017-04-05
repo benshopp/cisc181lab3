@@ -10,22 +10,35 @@ public class Card implements Comparable {
 	private eRank eRank;
 	private eSuit eSuit;
 	private int iCardNbr;
-
+	private boolean IsWild = false; // changed by constructor if wilds exists
+	
 	public Card() {
 	}
 
 	public Card(eRank eRank, eSuit eSuit, int iCardNbr) {
 		this.eRank = eRank;
 		this.eSuit = eSuit;
-		this.iCardNbr = iCardNbr;
+		this.iCardNbr = iCardNbr;		
+		this.IsWild = (eRank == eRank.JOKER) ? true : false;
 	}
 
 	public Card(eSuit eSuit, eRank eRank, int iCardNbr) {
 		this.eRank = eRank;
 		this.eSuit = eSuit;
 		this.iCardNbr = iCardNbr;
+		this.IsWild = (eRank == eRank.JOKER) ? true : false;
 	}
 
+	public boolean IsWild()
+	{
+		return IsWild;
+	}
+	
+	public void setIsWild(boolean b)
+	{
+		this.IsWild = b;
+	}
+	
 	public eRank geteRank() {
 		return eRank;
 	}
